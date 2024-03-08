@@ -1,13 +1,13 @@
 #include <string>
 
-#include "teacherid.h"
+#include "teacher_id.h"
 
 class Teacher {
     std::string login;
     std::string password;
     TeacherId id;
 
-public
+public:
     std::string name;
     std::string patronymic;
     std::string surname;
