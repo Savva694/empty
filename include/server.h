@@ -17,20 +17,33 @@
 #include <thread>
 #include <vector>
 #include "../include/session.h"
+#include "../include/student_info.h"
+// #include "../include/teacher_info.h"
 
 struct Server {
     Session session;
+    StudentInfo student_info;
+    // TeacherInfo teacher_info;
     int sListen;
     sockaddr_in server_address;
-    std::vector<std::pair<int, int>> students;
-    std::vector<std::pair<int, int>> teachers;
+    std::vector<int> connections;
 
 public:
-    Server(int port);
+    Server(int port = 32245);
 
     void find_clients();
 
-    void comm_teacher(int index);
+    void student_login(const std::vector<std::string>&, size_t);
 
-    void comm_student (int index);
+    void student_register(const std::vector<std::string>&, size_t);
+
+    void student_add_info(const std::vector<std::string>&, size_t);
+
+    void get_subjects(size_t);
+
+    void get_exams(const std::vector<std::string>&, size_t);
+
+    void student_register_to_exam(const std::vector<std::string>&, size_t);
+
+    void communicate (int index);
 };
