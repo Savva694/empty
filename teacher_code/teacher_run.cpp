@@ -39,7 +39,7 @@ int connection;
 //     }
 // }
 
-bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 1234) {
+bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 12345) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -68,7 +68,7 @@ int send_to_server(std::string message) {
 
 void recv_from_server(char* message) {
     if (!recv(connection, message, sizeof(message), 0)) {
-        std::cout << "Потеряно соединение с сервером.\n";
+        std::cout << "Потеряно соединение с сервером (teacher).\n";
         exit(0);
     }
 }
@@ -83,10 +83,10 @@ void safe_cin(T& cin_value) {
         std::cout << "Список доступных команд:\n";
         std::cout << "!exit - завершение сеанса\n";
         std::cout << "!help - вывод доступных команд\n";
-        std::cout << "show_my_exams - выводит список экзаменов, на которые вы зарегистрировались\n";
         std::cout << "show_subjects - выводит список всех предметов\n";
         std::cout << "show_exams subject - выводит список экзаменов по предмету subject\n";
-        std::cout << "pick_exam subject date - записаться на экзмен exam по предмету subject\n";
+        std::cout << "add_subject - добавляет ваш предмет в общий список предметов\n";
+        std::cout << "add_exam date - добавляет экзамен по вашему предмету на время date\n";
         std::cout << "...\n";
         safe_cin(cin_value);
     }
@@ -110,7 +110,7 @@ void login_in_system() {
         std::cout << "Теперь введите пароль: \n";
         safe_cin(password);
 
-        send_to_server("slg " + my_login + " " + password);
+        send_to_server("tlg " + my_login + " " + password);
         char message[1];
         recv_from_server(message);
         if (message[0] != '0') {
@@ -126,7 +126,7 @@ void registration_in_system() {
         std::cout << "Придумайте логин: \n";
         safe_cin(my_login);
 
-        send_to_server("srg " + my_login);
+        send_to_server("trg " + my_login);
         char message[1];
         recv_from_server(message);
         if (message[0] != '0') {
@@ -150,15 +150,15 @@ void registration_in_system() {
     safe_cin(first_name);
     safe_cin(patronymic);
 
-    std::cout << "Введите ваш курс (в формате 1, 2, 3, 4): \n";
-    std::string course;
-    safe_cin(course);
+    std::cout << "Введите вау кафедру: \n";
+    std::string department;
+    safe_cin(department);
 
-    std::cout << "Введите вашу группу (в формате Б00-000): \n";
-    std::string group;
-    safe_cin(group);
+    std::cout << "Введите ваш предмет: \n";
+    std::string subject;
+    safe_cin(subject);
 
-    send_to_server("sai " + my_login + " " + surname + " " + first_name + " " + patronymic + " " + course + " " + group);
+    send_to_server("tai " + my_login + " " + surname + " " + first_name + " " + patronymic + " " + department + " " + subject);
     std::cout << "Вы успешно зарегистрировались!\n";
 }
 
@@ -180,14 +180,6 @@ void login_or_registration() {
         std::cout << "Для входа введите 1\n";
         std::cout << "Для регистрации введите 2\n";
     }
-}
-
-void show_my_exams() {
-    send_to_server("sme " + my_login);
-    char message[1024];
-    recv_from_server(message);
-    std::cout << "Экзамены, на которые вы зарегистрировались: \n";
-    std::cout << message << "\n";
 }
 
 void show_subjects() {
@@ -213,23 +205,31 @@ void show_exams() {
     std::cout << "Произошла ошибка, скорее всего предмета " + subject + " не существует\n";\
 }
 
-void pick_exam() {
-    std::cout << "Введите предмет, на экзамен по которому вы хотите зарегистрироваться: \n";
-    std::string subject;
-    safe_cin(subject);
-
-    std::cout << "Введите время этого экзамена: \n";
-    std::string date;
-    safe_cin(date);
-
-    send_to_server("sre " + subject + " " + date);
-    char message[1];
+void add_subject() {
+    send_to_server("tas " + my_login);
+    char message[1024];
     recv_from_server(message);
-    if (message == "1") {
-        std::cout << "Вы успешно зарегистрировались на экзамен по предмету " + subject + ". Он пройдёт в " + date + ".\n";
+    if (message != "0") {
+        std::cout << "Ваш предмет ";
+        std::cout << message;
+        std::cout << " успешно добавлен\n";
         return;
     }
-    std::cout << "Произошла ошибка, скорее всего предмет или время проведения экзамена укзаны неверно.\n";
+    std::cout << "Произошла ошибка, скорее всего ваш предмет уже кто-то добавил\n";\
+}
+
+void add_exam() {
+    std::cout << "Введите время новго экзамена: \n";
+    std::string date;
+    safe_cin(date);
+    send_to_server("tae " + my_login + " " + date);
+    char message[1024];
+    recv_from_server(message);
+    if (message != "0") {
+        std::cout << "Новый экзамен по вашему предмету на время " + date + " успешно добавлен.\n";
+        return;
+    }
+    std::cout << "Произошла ошибка, скорее всего экзамен на это время уже кто-то добавил\n";\
 }
 
 int main() {
@@ -244,14 +244,14 @@ int main() {
     std::string command;
     safe_cin(command);
     while (true) {
-        if (command == "show_my_exams") {
-            show_my_exams();
-        } else if (command == "show_subjects") {
+        if (command == "show_subjects") {
             show_subjects();
         } else if (command == "show_exams") {
             show_exams();
-        } else if (command == "pick_exam") {
-            pick_exam();
+        } else if (command == "add_subject") {
+            add_subject();
+        } else if (command == "add_exam") {
+            add_exam();
         }
 
 
