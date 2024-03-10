@@ -8,9 +8,9 @@ class Student {
     StudentId id;
 
 public:
+    std::string surname;
     std::string name;
     std::string patronymic;
-    std::string surname;
     size_t course;
     std::string group;
 
