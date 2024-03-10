@@ -1,7 +1,6 @@
 #include <vector>
 #include <string>
 
-#include "date.h"
 #include "exam.h"
 
 class Subject {

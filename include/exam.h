@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <map>
 
 #include "exam_id.h"
 #include "date.h"
@@ -7,11 +8,12 @@
 #include "student.h"
 
 class Exam {
-    Date start_date;
     ExamId id;
+    Date start_date;
     std::vector<TeacherId> teachers_id;
     std::vector<StudentId> students_id;
     std::map<StudentId, TeacherId> examiners;
+    std::map<TeacherId, std::vector<StudentId>> students_for_teacher;
 
 public:
     Exam(const date&);
