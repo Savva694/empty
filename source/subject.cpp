@@ -1,9 +1,9 @@
 #include "../include/subject.h"
 
 Subject::Subject() {
-    myDate d(2024, 1, 14, 15, 30);
-    Exam e(d);
-    exams.insert(std::make_pair(d, e));
+    // myDate d(2024, 1, 14, 15, 30);
+    // Exam e(d);
+    // exams.insert(std::make_pair(d, e));
 }
 
 std::vector<myDate> Subject::get_exams() const {
@@ -18,4 +18,14 @@ bool Subject::add_student(const std::string& login, const myDate& myDate) {
     auto it = exams.find(myDate);
     if (it == exams.end()) return false;
     return it->second.add_student(login);
+}
+
+bool Subject::add_exam(const myDate& date) {
+    auto it = exams.lower_bound(date);
+    if (it != exams.end() && it->first.get_only_date() == date.get_only_date()) return false;
+    if (it != exams.begin()) {
+        --it;
+        if (it->first.get_only_date() == date.get_only_date()) return false;
+    }
+    exams.insert(std::make_pair(date, Exam(date)));
 }

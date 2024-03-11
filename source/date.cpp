@@ -46,3 +46,8 @@ std::string myDate::to_string() const {
     res += std::to_string(year);
     return res;
 }
+
+myDate myDate::get_only_date() const {
+    myDate copy(year, month, day, 0, 0);
+    return copy; 
+}

@@ -1,8 +1,8 @@
 #include "../include/session.h"
 
 Session::Session() {
-    Subject sub;
-    subjects.insert(std::make_pair("matan", sub));
+    // Subject sub;
+    // subjects.insert(std::make_pair("matan", sub));
 }
 
 std::string Session::get_subjects() const {
@@ -26,4 +26,15 @@ bool Session::add_student(const std::string& login, const std::string& subj, con
     return it->second.add_student(login, date);
 }
 
+bool Session::add_subject(const std::string& subject) {
+    auto it = subjects.find(subject);
+    if (it != subjects.end()) return false;
+    subjects.insert(std::make_pair(subject, Subject()));
+    return true;
+}
 
+bool Session::add_exam(const std::string& subject, const myDate& date) {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return false;
+    return it->second.add_exam(date);
+}

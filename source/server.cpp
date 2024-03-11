@@ -68,6 +68,46 @@ void Server::find_clients() {
     }
 }
 
+
+
+void Server::teacher_login(const std::vector<std::string>& str, size_t index) {
+    char msg = static_cast<char>(teacher_info.exist(str[1], str[2])) + '0';
+    send(connections[index], &msg, 1, 0);
+}
+
+void Server::teacher_register(const std::vector<std::string>& str, size_t index) {
+    char msg = static_cast<char>(teacher_info.add_teacher(str[1], str[2])) + '0';
+    send(connections[index], &msg, 1, 0);
+}
+
+void Server::teacher_add_info(const std::vector<std::string>& str, size_t index) {
+    teacher_info.add_info(str[1], str[2], str[3], str[4], str[5], str[6]);
+}
+
+std::string Server::get_subject(const std::string& login) const {
+    return teacher_info.get_subject(login);
+}
+
+void Server::add_subject(const std::vector<std::string>& str, size_t index) {
+    char* msg = "0";
+    size_t len = 1;
+    std::string subject = get_subject(str[1]);
+    bool is_added = session.add_subject(subject);
+    if (is_added) {
+        msg = to_cstring(subject);
+        len = subject.size();
+    }
+    send(connections[index], &msg, len, 0);
+    if (is_added) delete[] msg;
+}
+
+void Server::add_exam(const std::vector<std::string>& str, size_t index) {
+    char msg = static_cast<char>(session.add_exam(get_subject(str[1]), myDate(str[2]))) + '0';
+    send(connections[index], &msg, 1, 0);
+}
+
+
+
 void Server::student_login(const std::vector<std::string>& str, size_t index) {
     char msg = static_cast<char>(student_info.exist(str[1], str[2])) + '0';
     send(connections[index], &msg, 1, 0);
@@ -85,7 +125,7 @@ void Server::student_add_info(const std::vector<std::string>& str, size_t index)
 void Server::get_subjects(size_t index) {
     std::string sub = session.get_subjects();
     char* msg = to_cstring(sub);
-    send(connections[index], msg, sizeof(msg), 0);
+    send(connections[index], msg, sub.size(), 0);
     delete[] msg;
 }
 
@@ -97,13 +137,28 @@ void Server::get_exams(const std::vector<std::string>& str, size_t index) {
         str_date += ' ';
     }
     char* message = to_cstring(str_date);
-    send(connections[index], message, sizeof(message), 0);
+    send(connections[index], message, str_date.size(), 0);
     delete[] message;
 }
 
 void Server::student_register_to_exam(const std::vector<std::string>& str, size_t index) {
     char msg = static_cast<char>(session.add_student(str[1], str[2], myDate(str[3]))) + '0';
+    if (msg == '1') student_info.add_exam(str[1], str[2], myDate(str[3]));
     send(connections[index], &msg, 1, 0);
+}
+
+void Server::get_exams_for_student(const std::vector<std::string>& str, size_t index) {
+    std::vector<std::pair<std::string, myDate>> exams = student_info.get_exams_for_student(str[1]);
+    std::string str_exams;
+    for (auto exam : exams) {
+        str_exams += exam.first;
+        str_exams += ' ';
+        str_exams += exam.second.to_string();
+        str_exams += ' ';
+    }
+    char* message = to_cstring(str_exams);
+    send(connections[index], message, str_exams.size(), 0);
+    delete[] message;
 }
 
 void Server::communicate (int index) {
@@ -127,6 +182,18 @@ void Server::communicate (int index) {
             get_exams(str, index);
         } else if (str[0] == "sre") {
             student_register_to_exam(str, index);
+        } else if (str[0] == "sme") {
+            get_exams_for_student(str, index);
+        } else if (str[0] == "tlg") {
+            teacher_login(str, index);
+        } else if (str[0] == "trg") {
+            teacher_register(str, index);
+        } else if (str[0] == "tai") {
+            teacher_add_info(str, index);
+        } else if (str[0] == "tas") {
+            add_subject(str, index);
+        } else if (str[0] == "tae") {
+            add_exam(str, index);
         }
     }
 }

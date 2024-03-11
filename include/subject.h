@@ -17,6 +17,8 @@ public:
 
     bool add_student(const std::string&, const myDate&);
 
+    bool add_exam(const myDate&);
+
     // Subject(const std::vector<std::string>&, 
     //         const std::vector<std::string>&, 
     //         const std::vector<std::string>&);

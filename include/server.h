@@ -18,20 +18,31 @@
 #include <vector>
 #include "../include/session.h"
 #include "../include/student_info.h"
-// #include "../include/teacher_info.h"
+#include "../include/teacher_info.h"
 
 struct Server {
     Session session;
     StudentInfo student_info;
-    // TeacherInfo teacher_info;
+    TeacherInfo teacher_info;
     int sListen;
     sockaddr_in server_address;
     std::vector<int> connections;
 
-public:
-    Server(int port = 32245);
-
     void find_clients();
+
+
+    void teacher_login(const std::vector<std::string>&, size_t);
+
+    void teacher_register(const std::vector<std::string>&, size_t);
+
+    void teacher_add_info(const std::vector<std::string>&, size_t);
+
+    void add_subject(const std::vector<std::string>&, size_t);
+
+    std::string get_subject(const std::string&) const;
+
+    void add_exam(const std::vector<std::string>&, size_t);
+
 
     void student_login(const std::vector<std::string>&, size_t);
 
@@ -45,5 +56,11 @@ public:
 
     void student_register_to_exam(const std::vector<std::string>&, size_t);
 
+    void get_exams_for_student(const std::vector<std::string>&, size_t);
+
+
     void communicate (int index);
+
+public:
+    Server(int port = 32245);
 };

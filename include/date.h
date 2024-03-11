@@ -19,4 +19,5 @@ public:
     bool operator ==(const myDate&) const;
     bool operator !=(const myDate&) const;
     std::string to_string() const;
+    myDate myDate::get_only_date() const;
 };
