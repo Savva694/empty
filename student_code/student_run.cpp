@@ -21,6 +21,8 @@
 std::string my_login;
 sockaddr_in servAddr;
 int connection;
+int session_stage = 0;
+std::string exam = "";
 
 // void communicate_recv(int connection) {
 //     char msg[256];
@@ -39,7 +41,7 @@ int connection;
 //     }
 // }
 
-bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 1234) {
+bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -58,16 +60,17 @@ bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 
 }
 
 int send_to_server(std::string message) {
-    char* msg = new char[1024];
-    for (int i = 0; i < message.length(); ++i) {
+    char* msg = new char[message.size() + 1];
+    for (int i = 0; i < message.size(); ++i) {
         msg[i] = message[i];
     }
-    return send(connection, msg, sizeof(message), 0);
+    msg[message.size()] = '\0';
+    return send(connection, msg, message.size() + 1, 0);
     delete[] msg;
 }
 
-void recv_from_server(char* message) {
-    if (!recv(connection, message, sizeof(message), 0)) {
+void recv_from_server(char* message, size_t sz) {
+    if (!recv(connection, message, sz, 0)) {
         std::cout << "Потеряно соединение с сервером.\n";
         exit(0);
     }
@@ -103,7 +106,7 @@ void start_message() {
 
 void login_in_system() {
     while (true) {
-        std::cout << " Для входа введите логин: \n";
+        std::cout << "Для входа введите логин: \n";
         safe_cin(my_login);
 
         std::string password;
@@ -112,7 +115,7 @@ void login_in_system() {
 
         send_to_server("slg " + my_login + " " + password);
         char message[1];
-        recv_from_server(message);
+        recv_from_server(message, 1);
         if (message[0] != '0') {
             break;
         }
@@ -126,18 +129,19 @@ void registration_in_system() {
         std::cout << "Придумайте логин: \n";
         safe_cin(my_login);
 
-        send_to_server("srg " + my_login);
+        std::cout << "Придумайте надёжный пароль: \n";
+        std::string password;
+        safe_cin(password);
+
+        send_to_server("srg " + my_login + " " + password);
         char message[1];
-        recv_from_server(message);
+        recv_from_server(message, 1);
         if (message[0] != '0') {
             break;
         }
         std::cout << "Пользователь с таким логином уже зарегистрирован.\n";
     }
     std::cout << "Такой логин подходит.\n";
-    std::cout << "Придумайте надёжный пароль: \n";
-    std::string password;
-    safe_cin(password);
 
     std::cout << "Вы успешно создали аккаунт!\n";
     std::cout << "Теперь заполните информацию о себе.\n";
@@ -185,7 +189,7 @@ void login_or_registration() {
 void show_my_exams() {
     send_to_server("sme " + my_login);
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     std::cout << "Экзамены, на которые вы зарегистрировались: \n";
     std::cout << message << "\n";
 }
@@ -193,7 +197,7 @@ void show_my_exams() {
 void show_subjects() {
     send_to_server("sgs");
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     std::cout << "Все предметы: \n";
     std::cout << message << "\n";
 }
@@ -204,7 +208,7 @@ void show_exams() {
     safe_cin(subject);
     send_to_server("sge " + subject);
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     if (message != "0") {
         std::cout << "Доступные экзамены по предмету " + subject + "\n";
         std::cout << message << "\n";
@@ -222,9 +226,9 @@ void pick_exam() {
     std::string date;
     safe_cin(date);
 
-    send_to_server("sre " + subject + " " + date);
+    send_to_server("sre " + my_login + " " + subject + " " + date);
     char message[1];
-    recv_from_server(message);
+    recv_from_server(message, 1);
     if (message == "1") {
         std::cout << "Вы успешно зарегистрировались на экзамен по предмету " + subject + ". Он пройдёт в " + date + ".\n";
         return;
@@ -232,10 +236,96 @@ void pick_exam() {
     std::cout << "Произошла ошибка, скорее всего предмет или время проведения экзамена укзаны неверно.\n";
 }
 
+void start_exam() {
+    std::cout << "Введите предмет, экзамен по которому хотите начать: \n";
+    std::string subject;
+    safe_cin(subject);
+
+    std::cout << "Введите время этого экзамена: \n";
+    std::string date;
+    safe_cin(date);
+
+    send_to_server("sse " + my_login + " " + subject + " " + date);
+    char message[1];
+    recv_from_server(message, 1);
+    if (message == "1") {
+        std::cout << "Вы успешно начали экзамен.\n";
+        session_stage = 1;
+        exam = subject + " " + date;
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
+void set_grade() {
+    std::cout << "Введите желаемую оценку за экзамен: \n";
+    std::string grade;
+    while (true) {
+        safe_cin(grade);
+        if (grade == "3" || grade == "4" || grade == "5") {
+            break;
+        }
+        std::cout << "Введенная оценка не соответствует формату 3, 4, 5. Попробуйте еще раз.\n";
+    }
+
+    send_to_server("ser " + my_login + " " + exam + " " + grade);
+    char message[1024];
+    recv_from_server(message, 1024);
+    if (message != "0") {
+        std::cout << "Ваша задача: \n";
+        std::cout << message << "\n";
+        session_stage = 2;
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
+void show_problem() {
+    send_to_server("ssp " + my_login + " " + exam);
+    char message[1024];
+    recv_from_server(message, 1024);
+    if (message != "0") {
+        std::cout << "Ваша задача: \n";
+        std::cout << message << "\n";
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
+void write_solution() {
+    std::cout << "Напишите решение: \n";
+    std::string solution;
+    safe_cin(solution);
+
+    send_to_server("sap " + my_login + " " + exam + " " + solution);
+    char message[1];
+    recv_from_server(message, 1);
+    if (message == "1") {
+        std::cout << "Ваше решение принято на проверку, вы можете покидать экзамен. \n";
+        session_stage = 3;
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
+void leave_exam() {
+    send_to_server("see " + my_login + " " + exam);
+    char message[1];
+    recv_from_server(message, 1);
+    if (message == "1") {
+        std::cout << "Вы покинули экзамен. \n";
+        session_stage = 0;
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
 int main() {
+    std::cout << "a ";
     if (!connect_to_server()) {
         exit(0);
     }
+    std::cout << "a ";
 
     start_message();
     login_or_registration();
@@ -252,8 +342,15 @@ int main() {
             show_exams();
         } else if (command == "pick_exam") {
             pick_exam();
-        }
-
+        }  else if (command == "start_exam" && session_stage == 0) {
+            start_exam();
+        } else if (command == "set_grade" && session_stage == 1) {
+            set_grade();
+        } else if (command == "write_solution" && session_stage == 2) {
+            write_solution();
+        } else if (command == "leave_exam" && session_stage == 3) {
+            leave_exam();
+        } 
 
         safe_cin(command);
     }

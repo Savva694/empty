@@ -39,7 +39,7 @@ int connection;
 //     }
 // }
 
-bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 12345) {
+bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -58,17 +58,18 @@ bool connect_to_server(const size_t ip_server = 2130706433, const size_t port = 
 }
 
 int send_to_server(std::string message) {
-    char* msg = new char[1024];
-    for (int i = 0; i < message.length(); ++i) {
+    char* msg = new char[message.size() + 1];
+    for (int i = 0; i < message.size(); ++i) {
         msg[i] = message[i];
     }
-    return send(connection, msg, sizeof(message), 0);
+    msg[message.size()] = '\0';
+    return send(connection, msg, message.size() + 1, 0);
     delete[] msg;
 }
 
-void recv_from_server(char* message) {
-    if (!recv(connection, message, sizeof(message), 0)) {
-        std::cout << "Потеряно соединение с сервером (teacher).\n";
+void recv_from_server(char* message, size_t sz) {
+    if (!recv(connection, message, sz, 0)) {
+        std::cout << "Потеряно соединение с сервером.\n";
         exit(0);
     }
 }
@@ -112,7 +113,7 @@ void login_in_system() {
 
         send_to_server("tlg " + my_login + " " + password);
         char message[1];
-        recv_from_server(message);
+        recv_from_server(message, 1);
         if (message[0] != '0') {
             break;
         }
@@ -128,7 +129,7 @@ void registration_in_system() {
 
         send_to_server("trg " + my_login);
         char message[1];
-        recv_from_server(message);
+        recv_from_server(message, 1);
         if (message[0] != '0') {
             break;
         }
@@ -185,7 +186,7 @@ void login_or_registration() {
 void show_subjects() {
     send_to_server("sgs");
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     std::cout << "Все предметы: \n";
     std::cout << message << "\n";
 }
@@ -196,7 +197,7 @@ void show_exams() {
     safe_cin(subject);
     send_to_server("sge " + subject);
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     if (message != "0") {
         std::cout << "Доступные экзамены по предмету " + subject + "\n";
         std::cout << message << "\n";
@@ -208,7 +209,7 @@ void show_exams() {
 void add_subject() {
     send_to_server("tas " + my_login);
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     if (message != "0") {
         std::cout << "Ваш предмет ";
         std::cout << message;
@@ -224,7 +225,7 @@ void add_exam() {
     safe_cin(date);
     send_to_server("tae " + my_login + " " + date);
     char message[1024];
-    recv_from_server(message);
+    recv_from_server(message, 1024);
     if (message != "0") {
         std::cout << "Новый экзамен по вашему предмету на время " + date + " успешно добавлен.\n";
         return;
