@@ -320,6 +320,17 @@ void leave_exam() {
     std::cout << "Произошла ошибка.\n";
 }
 
+void my_grades() {
+    send_to_server("ssr " + my_login);
+    char message[1024];
+    recv_from_server(message, 1024);
+    if (message == "1") {
+        std::cout << "Ваши оценки: \n";
+        return;
+    }
+    std::cout << "Произошла ошибка.\n";
+}
+
 int main() {
     std::cout << "a ";
     if (!connect_to_server()) {
@@ -350,6 +361,8 @@ int main() {
             write_solution();
         } else if (command == "leave_exam" && session_stage == 3) {
             leave_exam();
+        } else if (command == "my_grades") {
+            my_grades();
         } 
 
         safe_cin(command);
