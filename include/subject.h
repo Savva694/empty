@@ -23,8 +23,7 @@ public:
 
     bool start_exam(const myDate&);
 
-    // Subject(const std::vector<std::string>&, 
-    //         const std::vector<std::string>&, 
-    //         const std::vector<std::string>&);
-    // const std::vector<std::string>& get_random_questions(int mark, int num) const; // returns num question for this mark
+    // bool check_student_in_exam(const myDate&, const std::string&) const;
+
+    // std::string Subject::get_questions(const myDate&, const std::string&, size_t);
 };

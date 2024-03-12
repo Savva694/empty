@@ -60,5 +60,8 @@ bool Session::start_exam(const std::string& subject, const myDate& date) {
 // bool Session::check_student_in_exam(const std::string& subject, const myDate& date, const std::string& login) const {
 //     auto it = subjects.find(subject);
 //     if (it == subjects.end()) return false;
-//     return it->second.check_student_in_exam(date);
+//     return it->second.check_student_in_exam(date, login);
+// }
+
+// std::string Session::get_questions(const std::string& subject, const myDate& date, const std::string& login, size_t mark) {
 // }

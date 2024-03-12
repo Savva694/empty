@@ -68,7 +68,9 @@ struct Server {
 
     void get_marks_for_student(const std::vector<std::string>&, size_t) const;
 
-    // bool student_start_exam(const std::vector<std::string>&, size_t) const;
+    // void student_start_exam(const std::vector<std::string>&, size_t) const;
+
+    // void get_questions(const std::vector<std::string>&, size_t);
 
 
     void communicate (int index);

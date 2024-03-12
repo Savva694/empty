@@ -22,4 +22,6 @@ public:
     bool add_teacher(const std::string&);
 
     bool start();
+
+    bool check_student_in_exam(const std::string&) const;
 };

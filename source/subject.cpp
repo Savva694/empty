@@ -47,3 +47,9 @@ bool Subject::start_exam(const myDate& date) {
     if (it == exams.end()) return false;
     return it->second.start();
 }
+
+// bool Subject::check_student_in_exam(const myDate& date, const std::string& login) const {
+// }
+
+// std::string Subject::get_questions(const myDate& date, const std::string& login, size_t mark) {
+// }

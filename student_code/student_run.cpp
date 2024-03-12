@@ -41,7 +41,7 @@ std::string exam = "";
 //     }
 // }
 
-bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server = 3232235627, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -368,3 +368,4 @@ int main() {
         safe_cin(command);
     }
 }
+

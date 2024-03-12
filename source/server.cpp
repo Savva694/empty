@@ -205,9 +205,14 @@ void Server::get_marks_for_student(const std::vector<std::string>& str, size_t i
     delete[] message;
 }
 
-// bool Server::student_start_exam(const std::vector<std::string>& str, size_t index) const {
-//     char msg = static_cast<char>(session.check_student_in_exam(str[1], str[2], myDate(str[3]))) + '0';
+// void Server::student_start_exam(const std::vector<std::string>& str, size_t index) const {
+//     char msg = static_cast<char>(session.check_student_in_exam(str[2], myDate(str[3]), str[1])) + '0';
 //     send(connections[index], &msg, 1, 0);
+// }
+
+// void Server::get_questions(const std::vector<std::string>& str, size_t index) {
+//     std::string questions = session.get_questions(str[2], myDate(str[3]), str[1], stoi(str[4]));
+//     char * msg = to_cstring(questions)
 // }
 
 void Server::communicate (int index) {
@@ -237,6 +242,8 @@ void Server::communicate (int index) {
             get_marks_for_student(str, index);
         // } else if (str[0] == "sse") {
         //     student_start_exam(str, index);
+        // } else if (str[0] == "ssp") {
+        //     get_questions(str, index);
         } else if (str[0] == "tlg") {
             teacher_login(str, index);
         } else if (str[0] == "trg") {
@@ -257,8 +264,4 @@ void Server::communicate (int index) {
             teacher_start_exam(str, index);
         }
     }
-}
-
-int main() {
-    Server server;
 }

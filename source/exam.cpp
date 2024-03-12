@@ -31,3 +31,9 @@ bool Exam::distribute() {
 bool Exam::start() {
     return distribute();
 }
+
+// bool Exam::check_student_in_exam(const std::string& login) const {
+// }
+
+// std::string Exam::get_questions(const std::string& login, size_t mark) const {
+// }

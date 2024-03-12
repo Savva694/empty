@@ -24,4 +24,8 @@ public:
     bool add_question(const std::string&, size_t, const std::string&);
 
     bool start_exam(const std::string&, const myDate&);
+
+    // bool check_student_in_exam(const std::string&, const myDate&, const std::string&) const;
+
+    // std::string Session::get_questions(const std::string&, const myDate&, const std::string&, size_t);
 };
