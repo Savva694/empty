@@ -24,24 +24,7 @@ int connection;
 int session_stage = 0;
 std::string exam = "";
 
-// void communicate_recv(int connection) {
-//     char msg[256];
-//     while (true) {
-//         int cnt = recv(connection, &msg, sizeof(msg), 0);
-//         if (cnt == 0) break;
-//         std::cout << msg << '\n';
-//     }
-// }
-
-// void communicate_send(int connection) {
-//     char msg[256];
-//     while (true) {
-//         std::cin.getline(msg, sizeof(msg));
-//         send(connection, &msg, sizeof(msg), 0);
-//     }
-// }
-
-bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server = 3232235627, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -52,11 +35,6 @@ bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 
     }
     std::cout << "Connected!\n";
     return true;
-
-    // std::thread Recv(communicate_recv, connection);
-    // std::thread Send(communicate_send, connection);
-    // Send.join();
-    // Recv.join();
 }
 
 int send_to_server(std::string message) {
@@ -89,8 +67,12 @@ void safe_cin(T& cin_value) {
         std::cout << "show_my_exams - выводит список экзаменов, на которые вы зарегистрировались\n";
         std::cout << "show_subjects - выводит список всех предметов\n";
         std::cout << "show_exams subject - выводит список экзаменов по предмету subject\n";
-        std::cout << "pick_exam subject date - записаться на экзмен exam по предмету subject\n";
-        std::cout << "...\n";
+        std::cout << "pick_exam subject time - записаться на экзмен по предмету subject, проходящий во время time\n";
+        std::cout << "start_exam subject time - начать сдачу экзамена по предмету subject в time\n";
+        std::cout << "set_grade grade - во время сдачи экзамена указать желаемую оценку grade\n";
+        std::cout << "write_solution  solution- во время сдачи экзамена отослать решение solution\n";
+        std::cout << "leave_exam - покинуть экзамен\n";
+        std::cout << "my_grades - выводит список полченных оценок\n";
         safe_cin(cin_value);
     }
 }
@@ -141,8 +123,6 @@ void registration_in_system() {
         }
         std::cout << "Пользователь с таким логином уже зарегистрирован.\n";
     }
-    std::cout << "Такой логин подходит.\n";
-
     std::cout << "Вы успешно создали аккаунт!\n";
     std::cout << "Теперь заполните информацию о себе.\n";
 
@@ -324,19 +304,18 @@ void my_grades() {
     send_to_server("ssr " + my_login);
     char message[1024];
     recv_from_server(message, 1024);
-    if (message == "1") {
+    if (message != "0") {
         std::cout << "Ваши оценки: \n";
+        std::cout << message << "\n";
         return;
     }
     std::cout << "Произошла ошибка.\n";
 }
 
 int main() {
-    std::cout << "a ";
     if (!connect_to_server()) {
         exit(0);
     }
-    std::cout << "a ";
 
     start_message();
     login_or_registration();
@@ -363,7 +342,9 @@ int main() {
             leave_exam();
         } else if (command == "my_grades") {
             my_grades();
-        } 
+        } else {
+            std::cout << "Ведённая команда не существует. Чтобы посмотреть список команд напишите !help.\n";
+        }
 
         safe_cin(command);
     }

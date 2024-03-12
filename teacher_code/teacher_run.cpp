@@ -24,24 +24,7 @@ int connection;
 int session_stage = 0;
 std::string exam = "";
 
-// void communicate_recv(int connection) {
-//     char msg[256];
-//     while (true) {
-//         int cnt = recv(connection, &msg, sizeof(msg), 0);
-//         if (cnt == 0) break;
-//         std::cout << msg << '\n';
-//     }
-// }
-
-// void communicate_send(int connection) {
-//     char msg[256];
-//     while (true) {
-//         std::cin.getline(msg, sizeof(msg));
-//         send(connection, &msg, sizeof(msg), 0);
-//     }
-// }
-
-bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server = 3232235627, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -52,11 +35,6 @@ bool connect_to_server(const size_t ip_server = 3232235621, const size_t port = 
     }
     std::cout << "Connected!\n";
     return true;
-
-    // std::thread Recv(communicate_recv, connection);
-    // std::thread Send(communicate_send, connection);
-    // Send.join();
-    // Recv.join();
 }
 
 int send_to_server(std::string message) {
@@ -88,9 +66,16 @@ void safe_cin(T& cin_value) {
         std::cout << "!help - вывод доступных команд\n";
         std::cout << "show_subjects - выводит список всех предметов\n";
         std::cout << "show_exams subject - выводит список экзаменов по предмету subject\n";
+        std::cout << "show_my_exams - выводит список всех экзаменов, на которые вы зарегистрировались\n";
         std::cout << "add_subject - добавляет ваш предмет в общий список предметов\n";
-        std::cout << "add_exam date - добавляет экзамен по вашему предмету на время date\n";
-        std::cout << "...\n";
+        std::cout << "add_exam time - добавляет экзамен по вашему предмету на время time\n";
+        std::cout << "reg_for_exam subject time - зарегистрироваться на экзамен по предмету subject, проходящий во время time\n";
+        std::cout << "add_problem rate - добавляет задачу по вашему предмету на оценку rate\n";
+        std::cout << "start_exam subject time - начать экзамен по предмету subject, проходящий во время time\n";
+        std::cout << "show_students - во время экзамена выводит список студентов, сдающих вам\n";
+        std::cout << "show_solution student - во время экзамена показать решение студента student\n";
+        std::cout << "rate_solution student - во время экзамена оценить решение студента student\n";
+        std::cout << "end_exam - завершшить текущий экзамен\n";
         safe_cin(cin_value);
     }
 }
@@ -125,11 +110,15 @@ void login_in_system() {
 }
 
 void registration_in_system() {
+    std::string password;
     while (true) {
         std::cout << "Придумайте логин: \n";
         safe_cin(my_login);
 
-        send_to_server("trg " + my_login);
+        std::cout << "Придумайте надёжный пароль: \n";
+        safe_cin(password);
+
+        send_to_server("trg " + my_login + " " + password);
         char message[1];
         recv_from_server(message, 1);
         if (message[0] != '0') {
@@ -137,11 +126,6 @@ void registration_in_system() {
         }
         std::cout << "Пользователь с таким логином уже зарегистрирован.\n";
     }
-    std::cout << "Такой логин подходит.\n";
-    std::cout << "Придумайте надёжный пароль: \n";
-    std::string password;
-    safe_cin(password);
-
     std::cout << "Вы успешно создали аккаунт!\n";
     std::cout << "Теперь заполните информацию о себе.\n";
 
@@ -225,6 +209,7 @@ void add_exam() {
     std::cout << "Введите время новго экзамена: \n";
     std::string date;
     safe_cin(date);
+    
     send_to_server("tae " + my_login + " " + date);
     char message[1024];
     recv_from_server(message, 1024);
@@ -382,6 +367,7 @@ void end_exam() {
 
 int main() {
     if (!connect_to_server()) {
+        std::cout << "Dont connected\n";
         exit(0);
     }
 
@@ -416,6 +402,8 @@ int main() {
             show_my_exams();
         } else if (command == "end_exam" && session_stage == 1) {
             end_exam();
+        }  else {
+            std::cout << "Ведённая команда не существует. Чтобы посмотреть список команд напишите !help.\n";
         }
 
         safe_cin(command);
