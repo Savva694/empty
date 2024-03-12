@@ -15,11 +15,13 @@ public:
 
     bool add_student(const std::string&, const std::string&, const myDate&);
 
+    bool add_teacher(const std::string&, const std::string&, const myDate&);
+
     bool add_subject(const std::string&);
 
     bool add_exam(const std::string&, const myDate&);
 
-    // void add_subject(const std::string& name); // make new subject with this name
-    // void add_teacher(std::string, ExamId);
-    // void add_exam(std::string);
+    bool add_question(const std::string&, size_t, const std::string&);
+
+    bool start_exam(const std::string&, const myDate&);
 };

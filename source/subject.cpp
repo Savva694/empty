@@ -20,6 +20,12 @@ bool Subject::add_student(const std::string& login, const myDate& myDate) {
     return it->second.add_student(login);
 }
 
+bool Subject::add_teacher(const std::string& login, const myDate& date) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.add_teacher(login);
+}
+
 bool Subject::add_exam(const myDate& date) {
     auto it = exams.lower_bound(date);
     if (it != exams.end() && it->first.get_only_date() == date.get_only_date()) return false;
@@ -28,4 +34,16 @@ bool Subject::add_exam(const myDate& date) {
         if (it->first.get_only_date() == date.get_only_date()) return false;
     }
     exams.insert(std::make_pair(date, Exam(date)));
+    return true;
+}
+
+bool Subject::add_question(size_t rate, const std::string& question) {
+    questions[rate - 3].push_back(question);
+    return true;
+}
+
+bool Subject::start_exam(const myDate& date) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.start();
 }

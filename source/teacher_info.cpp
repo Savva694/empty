@@ -15,10 +15,28 @@ void TeacherInfo::Teacher::add_info(const std::string& surname_, const std::stri
     subject = subject_;
 }
 
+void TeacherInfo::Teacher::add_exam(const std::string& subject, const myDate& date) {
+    exams.push_back(std::make_pair(subject, date));
+}
+
+std::string TeacherInfo::Teacher::get_password() const {
+    return password;
+}
+
+std::string TeacherInfo::Teacher::get_subject() const {
+    return subject;
+}
+
+std::vector<std::pair<std::string, myDate>> TeacherInfo::Teacher::get_my_exams() const {
+    return exams;
+}
+
+
+
 bool TeacherInfo::exist(const std::string& login, const std::string& password) {
     auto it = teachers.find(login);
     if (it == teachers.end()) return false;
-    return it->second.password == password;
+    return it->second.get_password() == password;
 }
 
 bool TeacherInfo::add_teacher(const std::string& login, const std::string& password) {
@@ -35,5 +53,15 @@ void TeacherInfo::add_info(const std::string& login, const std::string& surname,
 
 std::string TeacherInfo::get_subject(const std::string& login) const {
     auto it = teachers.find(login);
-    return it->second.subject;
+    return it->second.get_subject();
+}
+
+void TeacherInfo::add_exam(const std::string& login, const std::string& subject, const myDate& date) {
+    auto it = teachers.find(login);
+    it->second.add_exam(subject, date);
+}
+
+std::vector<std::pair<std::string, myDate>> TeacherInfo::get_exams_for_teacher(const std::string& login) const {
+    auto it = teachers.find(login);
+    return it->second.get_my_exams();
 }

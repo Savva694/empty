@@ -1,6 +1,7 @@
 #include <iostream>
 #include <unordered_set>
 #include <map>
+#include <vector>
 
 #include "date.h"
 
@@ -9,13 +10,16 @@ class Exam {
     std::unordered_set<std::string> teachers_login;
     std::unordered_set<std::string> students_login;
     std::map<std::string, std::string> examiners;
+    std::map<std::string, std::unordered_set<std::string>> students_for_teacher;
+
+    bool distribute();
 
 public:
     Exam(const myDate&);
+
     bool add_student(const std::string&);
 
+    bool add_teacher(const std::string&);
 
-    // void add_teacher(TeacherId tid);
-    // void find_random_examiner() const; // find examiner for every student, send student his examiner/turn student to examiner
-    // std::string get_myDate() const;
+    bool start();
 };

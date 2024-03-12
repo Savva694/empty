@@ -43,6 +43,14 @@ struct Server {
 
     void add_exam(const std::vector<std::string>&, size_t);
 
+    void teacher_register_to_exam(const std::vector<std::string>&, size_t);
+
+    void get_exams_for_teacher(const std::vector<std::string>&, size_t) const;
+
+    void add_question(const std::vector<std::string>&, size_t);
+
+    void teacher_start_exam(const std::vector<std::string>&, size_t);
+
 
     void student_login(const std::vector<std::string>&, size_t);
 
@@ -52,11 +60,15 @@ struct Server {
 
     void get_subjects(size_t);
 
-    void get_exams(const std::vector<std::string>&, size_t);
+    void get_exams(const std::vector<std::string>&, size_t) const;
 
     void student_register_to_exam(const std::vector<std::string>&, size_t);
 
-    void get_exams_for_student(const std::vector<std::string>&, size_t);
+    void get_exams_for_student(const std::vector<std::string>&, size_t) const;
+
+    void get_marks_for_student(const std::vector<std::string>&, size_t) const;
+
+    // bool student_start_exam(const std::vector<std::string>&, size_t) const;
 
 
     void communicate (int index);
