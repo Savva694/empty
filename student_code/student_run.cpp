@@ -1,22 +1,5 @@
 #include <iostream>
-#include <type_traits>
-#include <iostream>
-#include <string>
-#include <stdio.h>
-#include <sys/types.h>
-#include <sys/socket.h>
 #include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <string.h>
-#include <netdb.h>
-#include <sys/uio.h>
-#include <sys/time.h>
-#include <sys/wait.h>
-#include <fcntl.h>
-#include <fstream>
-#include <thread>
 
 std::string my_login;
 sockaddr_in servAddr;
@@ -24,7 +7,7 @@ int connection;
 int session_stage = 0;
 std::string exam = "";
 
-bool connect_to_server(const size_t ip_server = 2130706433 /*3232235627*/, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server = /*2130706433*/ 3232235627, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -96,9 +79,9 @@ void login_in_system() {
         safe_cin(password);
 
         send_to_server("slg " + my_login + " " + password);
-        char message[1];
-        recv_from_server(message, 1);
-        if (message[0] != '0') {
+        char message;
+        recv_from_server(&message, 1);
+        if (message != '0') {
             break;
         }
         std::cout << "Логин или пароль некорректен.\n";
@@ -116,9 +99,9 @@ void registration_in_system() {
         safe_cin(password);
 
         send_to_server("srg " + my_login + " " + password);
-        char message[1];
-        recv_from_server(message, 1);
-        if (message[0] != '0') {
+        char message;
+        recv_from_server(&message, 1);
+        if (message != '0') {
             break;
         }
         std::cout << "Пользователь с таким логином уже зарегистрирован.\n";
@@ -136,7 +119,13 @@ void registration_in_system() {
 
     std::cout << "Введите ваш курс (в формате 1, 2, 3, 4): \n";
     std::string course;
-    safe_cin(course);
+    while (true) {
+        safe_cin(course);
+        if (course == "1" || course == "2" || course == "3" || course == "4") {
+            break;
+        }
+        std::cout << "Неправильный формат ввода, попробуйте ещё раз. \n";
+    }
 
     std::cout << "Введите вашу группу (в формате Б00-000): \n";
     std::string group;
@@ -226,9 +215,9 @@ void start_exam() {
     safe_cin(date);
 
     send_to_server("sse " + my_login + " " + subject + " " + date);
-    char message[1];
-    recv_from_server(message, 1);
-    if (message == "1") {
+    char message;
+    recv_from_server(&message, 1);
+    if (message == '1') {
         std::cout << "Вы успешно начали экзамен.\n";
         session_stage = 1;
         exam = subject + " " + date;
@@ -278,9 +267,9 @@ void write_solution() {
     safe_cin(solution);
 
     send_to_server("sap " + my_login + " " + exam + " " + solution);
-    char message[1];
-    recv_from_server(message, 1);
-    if (message == "1") {
+    char message;
+    recv_from_server(&message, 1);
+    if (message == '1') {
         std::cout << "Ваше решение принято на проверку, вы можете покидать экзамен. \n";
         session_stage = 3;
         return;
@@ -290,9 +279,9 @@ void write_solution() {
 
 void leave_exam() {
     send_to_server("see " + my_login + " " + exam);
-    char message[1];
-    recv_from_server(message, 1);
-    if (message == "1") {
+    char message;
+    recv_from_server(&message, 1);
+    if (message == '1') {
         std::cout << "Вы покинули экзамен. \n";
         session_stage = 0;
         return;
@@ -334,7 +323,7 @@ int main() {
             pick_exam();
         }  else if (command == "start_exam" && session_stage == 0) {
             start_exam();
-        } else if (command == "set_grade" && session_stage == 1) {
+        } else if (command == "set_grade" && session_stage == 2) {
             set_grade();
         } else if (command == "write_solution" && session_stage == 2) {
             write_solution();

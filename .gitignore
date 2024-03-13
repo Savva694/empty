@@ -1,0 +1,9 @@
+build
+*.out
+*.a
+*.so
+*.o
+*.vscode
+student_run
+teacher_run
+
