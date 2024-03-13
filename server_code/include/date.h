@@ -18,8 +18,6 @@ public:
     myDate(size_t year, size_t month, size_t day, size_t hour, size_t min) :
             year(year), month(month), day(day), hour(hour), min(min) {}
 
-    operator std::string() const;
-
     bool operator <(const myDate&) const;
 
     bool operator >(const myDate&) const;

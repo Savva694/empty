@@ -24,7 +24,7 @@ int connection;
 int session_stage = 0;
 std::string exam = "";
 
-bool connect_to_server(const size_t ip_server = 3232235627, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server = 2130706433 /*3232235627*/, const size_t port = 32245) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -207,9 +207,9 @@ void pick_exam() {
     safe_cin(date);
 
     send_to_server("sre " + my_login + " " + subject + " " + date);
-    char message[1];
-    recv_from_server(message, 1);
-    if (message == "1") {
+    char message;
+    recv_from_server(&message, 1);
+    if (message == '1') {
         std::cout << "Вы успешно зарегистрировались на экзамен по предмету " + subject + ". Он пройдёт в " + date + ".\n";
         return;
     }

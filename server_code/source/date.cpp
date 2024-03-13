@@ -2,11 +2,11 @@
 #include <string.h>
 
 myDate::myDate(const std::string& str) { // hh:mm_dd.mm.yyyy
-    hour = stoi(str.substr(0, 1));
-    min = stoi(str.substr(3, 4));
-    day = stoi(str.substr(6, 7));
-    month = stoi(str.substr(9, 10));
-    year = stoi(str.substr(12, 15));
+    hour = stoi(str.substr(0, 2));
+    min = stoi(str.substr(3, 2));
+    day = stoi(str.substr(6, 2));
+    month = stoi(str.substr(9, 2));
+    year = stoi(str.substr(12, 4));
 } 
 
 bool myDate::operator <(const myDate& other) const {

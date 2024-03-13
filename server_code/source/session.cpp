@@ -1,9 +1,6 @@
 #include "../include/session.h"
 
-Session::Session() {
-    // Subject sub;
-    // subjects.insert(std::make_pair("matan", sub));
-}
+Session::Session() = default;
 
 std::string Session::get_subjects() const {
     std::string ans = "";

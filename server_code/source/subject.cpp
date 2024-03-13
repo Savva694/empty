@@ -1,10 +1,6 @@
 #include "../include/subject.h"
 
-Subject::Subject() {
-    // myDate d(2024, 1, 14, 15, 30);
-    // Exam e(d);
-    // exams.insert(std::make_pair(d, e));
-}
+Subject::Subject() = default;
 
 std::vector<myDate> Subject::get_exams() const {
     std::vector<myDate> ans;

@@ -23,5 +23,5 @@ public:
 
     bool start();
 
-    bool check_student_in_exam(const std::string&) const;
+    // bool check_student_in_exam(const std::string&) const;
 };
