@@ -62,5 +62,5 @@ struct Server {
     void communicate (int index);
 
 public:
-    Server(int port = 32245);
+    Server(int port);
 };

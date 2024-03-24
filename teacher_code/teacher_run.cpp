@@ -1,5 +1,6 @@
 #include <iostream>
 #include <netinet/in.h>
+#include <string.h>
 
 std::string my_login;
 sockaddr_in servAddr;
@@ -7,7 +8,7 @@ int connection;
 int session_stage = 0;
 std::string exam = "";
 
-bool connect_to_server(const size_t ip_server = /*2130706433*/ 3232235627, const size_t port = 32245) {
+bool connect_to_server(const size_t ip_server, const size_t port) {
     servAddr.sin_family = AF_INET;
     servAddr.sin_addr.s_addr = htonl(ip_server);
     servAddr.sin_port = htons(port);
@@ -104,7 +105,7 @@ void registration_in_system() {
         send_to_server("trg " + my_login + " " + password);
         char message;
         recv_from_server(&message, 1);
-        if (message[0] != '0') {
+        if (message != '0') {
             break;
         }
         std::cout << "Пользователь с таким логином уже зарегистрирован.\n";
@@ -348,9 +349,27 @@ void end_exam() {
     std::cout << "Произошла ошибка. \n";\
 }
 
-int main() {
-    if (!connect_to_server()) {
-        std::cout << "Dont connected\n";
+int ip_to_int(char* str) {
+    int ip = 0, m = 0;
+    for (size_t i = 0; i < strlen(str); ++i) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            m = m * 10 + str[i] - '0';
+        } else {
+            ip = ip * 256 + m;
+            m = 0;
+        }
+    }
+    ip = ip * 256 + m;
+    return ip;
+}
+
+int main(int argc, char* argv[]) {
+    if (argc < 3) return 0;
+    int ip = ip_to_int(argv[1]);
+    int port = atoi(argv[2]);
+
+    if (!connect_to_server(ip, port)) {
+        std::cout << "Не удалось подключиться\n";
         exit(0);
     }
 
