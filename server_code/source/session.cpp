@@ -54,6 +54,18 @@ bool Session::start_exam(const std::string& subject, const myDate& date) {
     return it->second.start_exam(date);
 }
 
+const Session::std::unordered_set<std::string>& teacher_watch_examinees(const std::string& subject, const myDate& date, const std::string& teacher_login) const {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return std::unordered_set<std::string>("228_1337_void_login");
+    return it->second.teacher_watch_examinees(date, teacher_login);
+}
+
+bool Session::end_exam(const std::string& subject, const myDate& date) {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return 0;
+    return it->second.teacher_watch_examinees(date);
+}
+
 // bool Session::check_student_in_exam(const std::string& subject, const myDate& date, const std::string& login) const {
 //     auto it = subjects.find(subject);
 //     if (it == subjects.end()) return false;

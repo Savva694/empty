@@ -37,6 +37,8 @@ struct Server {
 
     void teacher_start_exam(const std::vector<std::string>&, size_t);
 
+    void teacher_watch_examinees(const std::vector<std::string>&, size_t) const;
+
 
     void student_login(const std::vector<std::string>&, size_t);
 

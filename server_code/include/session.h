@@ -25,6 +25,10 @@ public:
 
     bool start_exam(const std::string&, const myDate&);
 
+    const std::unordered_set<std::string>& teacher_watch_examinees(const std::string&, const myDate&, const std::string&) const;
+
+    bool end_exam(const std::string&, const myDate&);
+
     // bool check_student_in_exam(const std::string&, const myDate&, const std::string&) const;
 
     // std::string Session::get_questions(const std::string&, const myDate&, const std::string&, size_t);
