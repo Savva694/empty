@@ -14,15 +14,17 @@ class Exam {
     }
 
     struct ExamTaker {
-        size_t mark;
+        size_t mark = 0;
+        size_t wanted_mark;
         std::vector<std::pair<size_t, size_t>> questions;
+        std::string solution = "";
         std::string examiner;
     };
 
     myDate start_myDate;
     std::unordered_set<std::string> teachers_login;
     std::unordered_map<std::string, ExamTaker> students;
-    std::map<std::string, std::unordered_set<std::string>> teacher_to_student;
+    std::map<std::string, std::unordered_set<std::string>> teacher_to_students;
     ExamStatus status;
 
     bool distribute();
@@ -47,4 +49,11 @@ public:
     const std::unordered_set<std::string>& teacher_watch_examinees(const std::string&) const;
 
     bool end_exam();
+
+    std::pair<bool, const std::string&> save_solution(const std::string&, const std::string&);
+
+    bool rate_student(const std::string&, const std::string&, size_t);
+
+    std::string check_solution(const std::string&, const std::string&);
 };
+

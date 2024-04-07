@@ -39,6 +39,11 @@ struct Server {
 
     void teacher_watch_examinees(const std::vector<std::string>&, size_t) const;
 
+    void rate_student(const std::vector<std::string>&, size_t);
+
+    void check_solution(const std::vector<std::string>&, size_t);
+
+
 
     void student_login(const std::vector<std::string>&, size_t);
 
@@ -56,9 +61,15 @@ struct Server {
 
     void get_marks_for_student(const std::vector<std::string>&, size_t) const;
 
-    // void student_start_exam(const std::vector<std::string>&, size_t) const;
+    void student_start_exam(const std::vector<std::string>&, size_t) const;
 
-    // void get_questions(const std::vector<std::string>&, size_t);
+    void get_questions(const std::vector<std::string>&, size_t) const;
+
+    void save_mark(const std::vector<std::string>&, size_t);
+
+    void student_end_exam(const std::vector<std::string>&, size_t);
+
+    void save_solution(const std::vector<std::string>&, size_t);
 
 
     void communicate (int index);

@@ -4,6 +4,9 @@
 
 #include "date.h"
 
+using vector_dates = std::vector<std::pair<std::string, myDate>>;
+using vector_marks = std::vector<std::pair<std::string, size_t>>;
+
 class StudentInfo {
     struct Student {
     private:
@@ -29,9 +32,9 @@ class StudentInfo {
 
         void add_exam(const std::string&, const myDate&);
 
-        std::vector<std::pair<std::string, myDate>> get_my_exams() const;
+        vector_dates get_my_exams() const;
 
-        std::vector<std::pair<std::string, size_t>> get_marks() const;
+        vector_marks get_marks() const;
     };
     std::map<std::string, Student> students;
 
@@ -47,7 +50,7 @@ public:
 
     void add_exam(const std::string&, const std::string&, const myDate&);
     
-    std::vector<std::pair<std::string, myDate>> get_exams_for_student(const std::string&) const;
+    vector_dates get_exams_for_student(const std::string&) const;
 
-    std::vector<std::pair<std::string, size_t>> get_marks(const std::string&) const;
+    vector_marks get_marks(const std::string&) const;
 };

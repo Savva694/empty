@@ -46,7 +46,7 @@ std::vector<std::pair<size_t, size_t>> Exam::get_questions(const std::string& lo
 bool Exam::save_mark(const std::string& login, size_t mark) {
     auto it = students.find(login);
     if (it == students.end()) return false;
-    it->second.mark = mark;
+    it->second.wanted_mark = mark;
     return true;
 }
 
@@ -68,3 +68,24 @@ bool Exam::end_exam() {
     }
     return 0;
 }
+
+std::pair<bool, const std::string&> Exam::save_solution(const std::string& login, const std::string& sol) {
+    auto it = students.find(login);
+    if (it == students.end()) return {false, ""};
+    it->second.solution += sol;
+    return {true, it->second.examiner};
+}
+
+bool Exam::rate_student(const std::string& login, const std::string& student_login, size_t mark) {
+    if (teachers_login.find(login) == teachers_login.end() || 
+            teacher_to_students[login].find(student_login) == teacher_to_students[login].end()) return false;
+    students[student_login].mark = mark;
+    return true;
+}
+
+std::string Exam::check_solution(const std::string& login, const std::string& student_login) {
+    if (teachers_login.find(login) == teachers_login.end() || 
+            teacher_to_students[login].find(student_login) == teacher_to_students[login].end()) return "0";
+    return students[student_login].solution;
+}
+
