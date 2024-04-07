@@ -54,11 +54,47 @@ bool Session::start_exam(const std::string& subject, const myDate& date) {
     return it->second.start_exam(date);
 }
 
-// bool Session::check_student_in_exam(const std::string& subject, const myDate& date, const std::string& login) const {
-//     auto it = subjects.find(subject);
-//     if (it == subjects.end()) return false;
-//     return it->second.check_student_in_exam(date, login);
-// }
+bool Session::check_student_in_exam(const std::string& subject, const myDate& date, const std::string& login) const {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return false;
+    return it->second.check_student_in_exam(date, login);
+}
 
-// std::string Session::get_questions(const std::string& subject, const myDate& date, const std::string& login, size_t mark) {
-// }
+std::string Session::get_questions(const std::string& subject, const myDate& date, const std::string& login) const {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return "0";
+    return it->second.get_questions(date, login);
+}
+
+bool Session::save_mark(const std::string& subject, const myDate& date, const std::string& login, size_t mark) {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return false;
+    return it->second.save_mark(date, login, mark);
+}
+
+bool Session::student_end_exam(const std::string& subject, const myDate& date, const std::string& login) {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return false;
+    return it->second.student_end_exam(date, login);
+}
+
+std::pair<bool, const std::string&> Session::save_solution(
+        const std::string& subject, const myDate& date, const std::string& login, const std::string& sol) {
+    auto it = subjects.find(subject);
+    if (it == subjects.end()) return {false, ""};
+    return it->second.save_solution(date, login, sol);
+}
+
+bool Session::rate_student(const std::string& subject, const myDate& date, const std::string& login, 
+        const std::string& student_login, size_t mark) {
+    auto it = subjects.find(subject);
+    if (it != subjects.end()) return false;
+    return it->second.rate_student(date, login, student_login, mark);
+}
+
+std::string Session::check_solution(const std::string& subject, const myDate& date, const std::string& login, 
+        const std::string& student_login) {
+    auto it = subjects.find(subject);
+    if (it != subjects.end()) return "0";
+    return it->second.check_solution(date, login, student_login);
+}

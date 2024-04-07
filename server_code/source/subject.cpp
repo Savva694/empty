@@ -44,8 +44,51 @@ bool Subject::start_exam(const myDate& date) {
     return it->second.start();
 }
 
-// bool Subject::check_student_in_exam(const myDate& date, const std::string& login) const {
-// }
+bool Subject::check_student_in_exam(const myDate& date, const std::string& login) const {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.check_student_in_exam(login);
+}
 
-// std::string Subject::get_questions(const myDate& date, const std::string& login, size_t mark) {
-// }
+std::string Subject::get_questions(const myDate& date, const std::string& login) const {
+    auto it = exams.find(date);
+    if (it == exams.end()) return "0";
+    std::vector<std::pair<size_t, size_t>> vect = it->second.get_questions(login);
+    std::string ans = "";
+    for (std::pair<size_t, size_t> question : vect) {
+        ans += questions[question.first][question.second];
+        ans += "\n";
+    }
+    return ans;
+}
+
+bool Subject::save_mark(const myDate& date, const std::string& login, size_t mark) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.save_mark(login, mark);
+}
+
+bool Subject::student_end_exam(const myDate& date, const std::string& login) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.student_end_exam(login);
+}
+
+std::pair<bool, const std::string&> Subject::save_solution(const myDate& date, 
+        const std::string& login, const std::string& sol) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return {false, ""};
+    return it->second.save_solution(login, sol);
+}
+
+bool Subject::rate_student(const myDate& date, const std::string& login, const std::string& student_login, size_t mark) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return false;
+    return it->second.rate_student(login, student_login, mark);
+}
+
+std::string Subject::check_solution(const myDate& date, const std::string& login, const std::string& student_login) {
+    auto it = exams.find(date);
+    if (it == exams.end()) return "0";
+    return it->second.check_solution(login, student_login);
+}
