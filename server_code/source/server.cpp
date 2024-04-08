@@ -141,7 +141,7 @@ void Server::teacher_watch_examinees(const std::vector<std::string>& str, size_t
     send(connections[index], &message, 1, 0);
 }
 
-bool Server::end_exam(const std::vector<std::string>& str, size_t index) {
+void Server::end_exam(const std::vector<std::string>& str, size_t index) {
     char msg = '0';
     for (const std::pair<std::string, myDate>& exam : teacher_info.get_exams_for_teacher(str[1])) {
         if (exam.second == str[3]) {

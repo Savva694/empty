@@ -3,13 +3,13 @@
 Exam::Exam(const myDate& myDate) : start_myDate(myDate) {};
 
 bool Exam::add_student(const std::string& login) {
-    if (status != not_started && students.find(login) != students.end()) return false;
-    students.insert(login, {});
+    if (status == not_started && students.find(login) != students.end()) return false;
+    students.insert({login, ExamTaker(login)});
     return true;
 }
 
 bool Exam::add_teacher(const std::string& login) {
-    if (status != not_started && teachers_login.find(login) != teachers_login.end()) return false;
+    if (status == not_started && teachers_login.find(login) != teachers_login.end()) return false;
     teachers_login.insert(login);
     return true;
 }
@@ -20,10 +20,10 @@ bool Exam::distribute() {
     for (std::string it : teachers_login) {
         teachers_copy.push_back(it);
     }
-    for (auto login : students) {
+    for (std::pair<const std::string, ExamTaker>& student : students) {
         size_t teacher = rand() % teachers_login.size();
-        teacher_to_students[teachers_copy[teacher]].insert(login, {});
-        students[login.first].examiner = teachers_copy[teacher];
+        teacher_to_students[teachers_copy[teacher]].insert(student.second.login);
+        student.second.examiner = teachers_copy[teacher];
     }
     return true;
 }
@@ -57,10 +57,12 @@ bool Exam::student_end_exam(const std::string& login) {
     return true;
 }
 
-const std::string& Exam::teacher_watch_examinees(const std::string& teacher_login) const {
+std::string Exam::teacher_watch_examinees(const std::string& teacher_login) const {
     if (status == started) {
         std::string msg = "";
-        for (const std::string& student : teacher_to_students[teacher_login]) {
+        auto it = teacher_to_students.find(teacher_login);
+        if (it == teacher_to_students.end()) return "0";
+        for (const std::string& student : it->second) {
             msg += student;
             msg += ' ';
         }

@@ -14,19 +14,24 @@ class Exam {
     };
 
     struct ExamTaker {
+        std::string login;
         size_t mark = 0;
         size_t wanted_mark;
         std::vector<std::pair<size_t, size_t>> questions;
         std::string solution = "";
         std::string examiner;
 
-        bool operator==(const ExamTaker other) const {
-            return mark == other.mark && wanted_mark == other.wanted_mark && questions == other.questions && examiner == other.examiner;
+        bool operator==(const ExamTaker& other) const {
+            return login == other.login;
         }
 
-        bool operator!=(const ExamTaker other) const {
+        bool operator!=(const ExamTaker& other) const {
             return !(*this == other);
         }
+
+        ExamTaker() = default;
+
+        ExamTaker(const std::string& login): login(login) {};
     };
 
     myDate start_myDate;
@@ -54,7 +59,7 @@ public:
 
     bool student_end_exam(const std::string&);
 
-    const std::string& teacher_watch_examinees(const std::string&) const;
+    std::string teacher_watch_examinees(const std::string&) const;
 
     bool end_exam();
 
