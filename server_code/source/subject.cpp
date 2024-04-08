@@ -44,9 +44,9 @@ bool Subject::start_exam(const myDate& date) {
     return it->second.start();
 }
 
-const Subject::std::unordered_set<std::string>& teacher_watch_examinees(const myDate& date, const std::string& teacher_login) const {
+const std::string& Subject::teacher_watch_examinees(const myDate& date, const std::string& teacher_login) const {
     auto it = exams.find(date);
-    if (it == exams.end()) return std::unordered_set<std::string>("228_1337_void_login");
+    if (it == exams.end()) return 0;
     return it->second.teacher_watch_examinees(teacher_login);
 }
 

@@ -23,9 +23,7 @@ public:
 
     bool start_exam(const myDate&);
 
-    const std::unordered_set<std::string>& teacher_watch_examinees(const myDate&, const std::string&) const;
-
-    bool end_exam(const myDate&);
+    const std::string& teacher_watch_examinees(const myDate&, const std::string&) const;
 
     bool end_exam(const myDate&);
 

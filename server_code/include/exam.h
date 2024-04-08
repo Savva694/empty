@@ -8,10 +8,10 @@
 
 class Exam {
     enum ExamStatus {
-        not_started = 0,
-        started = 1,
-        finished = 2;
-    }
+        not_started,
+        started,
+        finished
+    };
 
     struct ExamTaker {
         size_t mark = 0;
@@ -19,6 +19,14 @@ class Exam {
         std::vector<std::pair<size_t, size_t>> questions;
         std::string solution = "";
         std::string examiner;
+
+        bool operator==(const ExamTaker other) const {
+            return mark == other.mark && wanted_mark == other.wanted_mark && questions == other.questions && examiner == other.examiner;
+        }
+
+        bool operator!=(const ExamTaker other) const {
+            return !(*this == other);
+        }
     };
 
     myDate start_myDate;
@@ -46,7 +54,7 @@ public:
 
     bool student_end_exam(const std::string&);
 
-    const std::unordered_set<std::string>& teacher_watch_examinees(const std::string&) const;
+    const std::string& teacher_watch_examinees(const std::string&) const;
 
     bool end_exam();
 

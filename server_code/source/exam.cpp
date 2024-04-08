@@ -3,13 +3,13 @@
 Exam::Exam(const myDate& myDate) : start_myDate(myDate) {};
 
 bool Exam::add_student(const std::string& login) {
-    if (status != 0 && students.find(login) != students.end()) return false;
+    if (status != not_started && students.find(login) != students.end()) return false;
     students.insert(login, {});
     return true;
 }
 
 bool Exam::add_teacher(const std::string& login) {
-    if (status != 0 && teachers_login.find(login) != teachers_login.end()) return false;
+    if (status != not_started && teachers_login.find(login) != teachers_login.end()) return false;
     teachers_login.insert(login);
     return true;
 }
@@ -29,7 +29,7 @@ bool Exam::distribute() {
 }
 
 bool Exam::start() {
-    status = 1;
+    status = started;
     return distribute();
 }
 
@@ -57,13 +57,21 @@ bool Exam::student_end_exam(const std::string& login) {
     return true;
 }
 
-const std::unordered_set<std::string>& Exam::teacher_watch_examinees(const std::string& teacher_login) const {
-    return status == 1 && add_students_for_teacher[teacher_login];
+const std::string& Exam::teacher_watch_examinees(const std::string& teacher_login) const {
+    if (status == started) {
+        std::string msg = "";
+        for (const std::string& student : teacher_to_students[teacher_login]) {
+            msg += student;
+            msg += ' ';
+        }
+        return msg;
+    }
+    return "0";
 }
 
 bool Exam::end_exam() {
-    if (status == 1) {
-        status = 2;
+    if (status == started) {
+        status = finished;
         return 1;
     }
     return 0;

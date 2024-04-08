@@ -43,6 +43,8 @@ struct Server {
 
     void check_solution(const std::vector<std::string>&, size_t);
 
+    bool end_exam(const std::vector<std::string>&, size_t);
+
 
 
     void student_login(const std::vector<std::string>&, size_t);

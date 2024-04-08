@@ -136,31 +136,21 @@ void Server::teacher_start_exam(const std::vector<std::string>& str, size_t inde
 }
 
 void Server::teacher_watch_examinees(const std::vector<std::string>& str, size_t index) const {
-    const std::unordered_set<std::string>& examinees = session.teacher_watch_examinees(str[2], str[3], str[1]);
-    char msg = 0;
-    if (examineers == std::unordered_set<std::string>("228_1337_void_login")) {
-        send(connections[index], &msg, 1, 0);
-        return;
-    }
-    msg = "";
-    std::string examinees;
-    for (const std::string& student : examinees) {
-        msg += student;
-        msg += ' ';
-    }
-    char* message = to_cstring(msg);
-    send(connections[index], &msg, 1, 0);
+    const std::string& examinees = session.teacher_watch_examinees(str[2], str[3], str[1]);
+    char* message = to_cstring(examinees);
+    send(connections[index], &message, 1, 0);
 }
 
 bool Server::end_exam(const std::vector<std::string>& str, size_t index) {
-    char msg = 0;
-    for (const std::pair<std::string, myDate>& exam : teacher_info.examget_exams_for_teacher(str[1])) {
+    char msg = '0';
+    for (const std::pair<std::string, myDate>& exam : teacher_info.get_exams_for_teacher(str[1])) {
         if (exam.second == str[3]) {
             msg = static_cast<char>(session.start_exam(str[2], myDate(str[3])));
             break;
         }
     }
     send(connections[index], &msg, 1, 0);
+}
 
 void Server::rate_student(const std::vector<std::string>& str, size_t index) {
     char msg = static_cast<char>(session.rate_student(str[2], myDate(str[3]), str[1], str[4], stoi(str[5]))) + '0';
