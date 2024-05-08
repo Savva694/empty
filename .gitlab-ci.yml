@@ -6,7 +6,7 @@ Nomaster:
   tags:
     - common
   stage: nomaster
-  expect:
+  except:
     - master
   script:
     - echo nomaster
