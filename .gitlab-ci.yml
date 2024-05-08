@@ -3,11 +3,15 @@ stages:
   - tests
 
 Nomaster:
+  tags:
+    - common
   stage: nomaster
   expect:
     - master
 
 Test:
+  tags:
+    - common
   stage: test
   only:
     - $CI_COMMIT_MESSAGE -match "test"
