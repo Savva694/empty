@@ -14,7 +14,7 @@ Nomaster:
 Test:
   tags:
     - common
-  stage: test
+  stage: tests
   only:
     - $CI_COMMIT_MESSAGE -match "test"
   script:
