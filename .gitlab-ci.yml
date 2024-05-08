@@ -8,6 +8,8 @@ Nomaster:
   stage: nomaster
   expect:
     - master
+  script:
+    - echo nomaster
 
 Test:
   tags:
@@ -15,3 +17,5 @@ Test:
   stage: test
   only:
     - $CI_COMMIT_MESSAGE -match "test"
+  script:
+    - echo test
