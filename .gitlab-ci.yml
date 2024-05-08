@@ -1,0 +1,13 @@
+stages:
+  - nomaster
+  - tests
+
+Nomaster:
+  stage: nomaster
+  expect:
+    - master
+
+Test:
+  stage: test
+  only:
+    - $CI_COMMIT_MESSAGE -match "test"
